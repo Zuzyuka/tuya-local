@@ -1,0 +1,750 @@
+name: Circuit breaker energy meter (TOVA-63T)
+# Built from the Tuya data model (modelId e1kuh95c).
+products:
+  - id: pw9g3aftgssnjlkv
+    manufacturer: TOMZN
+    model: TOVA-63T
+entities:
+  # ---- DP 1 forward_energy_total ----
+  - entity: sensor
+    class: energy
+    dps:
+      - id: 1
+        type: integer
+        name: sensor
+        unit: kWh
+        class: total_increasing
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 6 phase_a ----
+  - entity: sensor
+    class: voltage
+    dps:
+      - id: 6
+        type: base64
+        name: sensor
+        unit: V
+        class: measurement
+        optional: true
+        mask: "FFFF000000000000"
+        mapping:
+          - scale: 10
+  - entity: sensor
+    class: current
+    dps:
+      - id: 6
+        type: base64
+        name: sensor
+        unit: A
+        class: measurement
+        optional: true
+        mask: "0000FFFFFF000000"
+        mapping:
+          - scale: 1000
+  - entity: sensor
+    class: power
+    dps:
+      - id: 6
+        type: base64
+        name: sensor
+        unit: kW
+        class: measurement
+        optional: true
+        mask: "0000000000FFFFFF"
+        mapping:
+          - scale: 1000
+  # ---- DP 9 fault ----
+  - entity: binary_sensor
+    name: Fault code
+    class: problem
+    category: diagnostic
+    dps:
+      - id: 9
+        type: bitfield
+        name: sensor
+        optional: true
+        mapping:
+          - dps_val: 0
+            value: false
+          - value: true
+      - id: 9
+        type: bitfield
+        name: fault_code
+      - id: 9
+        type: bitfield
+        name: description
+        mapping:
+          - dps_val: 0
+            value: ok
+          - dps_val: 1
+            value: short_circuit_alarm
+          - dps_val: 2
+            value: surge_alarm
+          - dps_val: 4
+            value: overload_alarm
+          - dps_val: 8
+            value: leakagecurr_alarm
+          - dps_val: 16
+            value: temp_dif_fault
+          - dps_val: 32
+            value: fire_alarm
+          - dps_val: 64
+            value: high_power_alarm
+          - dps_val: 128
+            value: self_test_alarm
+          - dps_val: 256
+            value: ov_cr
+          - dps_val: 512
+            value: unbalance_alarm
+          - dps_val: 1024
+            value: ov_vol
+          - dps_val: 2048
+            value: undervoltage_alarm
+          - dps_val: 4096
+            value: miss_phase_alarm
+          - dps_val: 8192
+            value: outage_alarm
+          - dps_val: 16384
+            value: magnetism_alarm
+          - dps_val: 32768
+            value: credit_alarm
+          - dps_val: 65536
+            value: no_balance_alarm
+          - dps_val: 131072
+            value: leakage_early_warning
+          - dps_val: 262144
+            value: overcur_early_warning
+          - dps_val: 524288
+            value: overvol_early_warning
+          - dps_val: 1048576
+            value: overpow_early_warning
+          - dps_val: 2097152
+            value: undvol_early_warning
+          - dps_val: 4194304
+            value: higtemp_early_warning
+  # ---- DP 11 prepayment_switch ----
+  - entity: switch
+    name: Prepayment
+    category: config
+    hidden: true
+    dps:
+      - id: 11
+        type: boolean
+        name: switch
+        optional: true
+  # ---- DP 12 clear_energy ----
+  - entity: button
+    name: Clear remaining energy
+    category: config
+    hidden: true
+    dps:
+      - id: 12
+        type: boolean
+        name: button
+        optional: true
+  # ---- DP 13 balance_energy ----
+  - entity: sensor
+    name: Balance energy
+    class: energy_storage
+    category: diagnostic
+    hidden: true
+    dps:
+      - id: 13
+        type: integer
+        name: sensor
+        unit: kWh
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 14 energy_charge ----
+  - entity: number
+    name: Charge energy
+    class: energy_storage
+    category: config
+    hidden: true
+    dps:
+      - id: 14
+        type: integer
+        name: value
+        unit: kWh
+        optional: true
+        range:
+          min: 0
+          max: 999999
+        mapping:
+          - scale: 100
+  # ---- DP 15 leakage_current ----
+  - entity: sensor
+    name: Leakage current
+    translation_key: leakage_current
+    class: current
+    category: diagnostic
+    dps:
+      - id: 15
+        type: integer
+        name: sensor
+        unit: mA
+        class: measurement
+        optional: true
+  # ---- DP 16 switch ----
+  - entity: switch
+    dps:
+      - id: 16
+        type: boolean
+        name: switch
+  # ---- DP 17 alarm_set_1 ----
+  #   blocks of 4 bytes [type][enabled][value hi][value lo]: 03 overload, 04 leakage, 05 temperature
+  - entity: switch
+    name: Overload alarm
+    category: config
+    dps:
+      - id: 17
+        type: base64
+        name: switch
+        optional: true
+        mask: "00FF00000000000000000000"
+  - entity: number
+    name: Overload alarm limit
+    mode: box
+    class: power
+    category: config
+    dps:
+      - id: 17
+        type: base64
+        name: value
+        optional: true
+        mask: "0000FFFF0000000000000000"
+        unit: kW
+        range:
+          min: 1
+          max: 17
+  - entity: switch
+    name: Leakage alarm
+    category: config
+    dps:
+      - id: 17
+        type: base64
+        name: switch
+        optional: true
+        mask: "0000000000FF000000000000"
+  - entity: number
+    name: Leakage alarm limit
+    mode: box
+    class: current
+    category: config
+    dps:
+      - id: 17
+        type: base64
+        name: value
+        optional: true
+        mask: "000000000000FFFF00000000"
+        unit: mA
+        range:
+          min: 10
+          max: 90
+  - entity: switch
+    name: Temperature alarm
+    category: config
+    dps:
+      - id: 17
+        type: base64
+        name: switch
+        optional: true
+        mask: "000000000000000000FF0000"
+  - entity: number
+    name: Temperature alarm limit
+    mode: box
+    class: temperature
+    category: config
+    dps:
+      - id: 17
+        type: base64
+        name: value
+        optional: true
+        mask: "00000000000000000000FFFF"
+        unit: °C
+        range:
+          min: 10
+          max: 85
+  # ---- DP 18 alarm_set_2 ----
+  #   blocks of 4 bytes [type][enabled][value hi][value lo]: 01 over-current, 03 over-voltage, 04 under-voltage
+  - entity: switch
+    name: Over-current alarm
+    category: config
+    dps:
+      - id: 18
+        type: base64
+        name: switch
+        optional: true
+        mask: "00FF00000000000000000000"
+  - entity: number
+    name: Over-current alarm limit
+    mode: box
+    class: current
+    category: config
+    dps:
+      - id: 18
+        type: base64
+        name: value
+        optional: true
+        mask: "0000FFFF0000000000000000"
+        unit: A
+        range:
+          min: 1
+          max: 63
+  - entity: switch
+    name: Over-voltage alarm
+    category: config
+    dps:
+      - id: 18
+        type: base64
+        name: switch
+        optional: true
+        mask: "0000000000FF000000000000"
+  - entity: number
+    name: Over-voltage alarm limit
+    mode: box
+    class: voltage
+    category: config
+    dps:
+      - id: 18
+        type: base64
+        name: value
+        optional: true
+        mask: "000000000000FFFF00000000"
+        unit: V
+        range:
+          min: 85
+          max: 300
+  - entity: switch
+    name: Under-voltage alarm
+    category: config
+    dps:
+      - id: 18
+        type: base64
+        name: switch
+        optional: true
+        mask: "000000000000000000FF0000"
+  - entity: number
+    name: Under-voltage alarm limit
+    mode: box
+    class: voltage
+    category: config
+    dps:
+      - id: 18
+        type: base64
+        name: value
+        optional: true
+        mask: "00000000000000000000FFFF"
+        unit: V
+        range:
+          min: 76
+          max: 220
+# ---------------------------------------------------------------------------
+# Preset selects: each option writes the COMPLETE DP value, so no cached value
+# is needed. Values verified against the device (hex in comments).
+# To add an option: hex -> base64:  echo '03000 ...' | xxd -r -p | base64
+# ---------------------------------------------------------------------------
+  - entity: select
+    name: Alarm settings 1 preset
+    category: config
+    dps:
+      - id: 17
+        type: base64
+        name: option
+        optional: true
+        mapping:
+          - dps_val: "AwAADQQBABQFAQBB"    # 03 00 00 0D 04 01 00 14 05 01 00 41
+            value: "Overload OFF, Leakage ON 20 mA, Temp. ON 65°C"
+          - dps_val: "AwEADQQBABQFAQBB"    # 03 01 00 0D 04 01 00 14 05 01 00 41
+            value: "Overload ON 13 kW, Leakage ON 20 mA, Temp. ON 65°C"
+          - dps_val: "AwAADQQBAB4FAQBB"    # 03 00 00 0D 04 01 00 1E 05 01 00 41
+            value: "Overload OFF, Leakage ON 30 mA, Temp. ON 65°C"
+          - dps_val: "AwEADQQBAB4FAQBB"    # 03 01 00 0D 04 01 00 1E 05 01 00 41
+            value: "Overload ON 13 kW, Leakage ON 30 mA, Temp. ON 65°C"
+  #- entity: select
+  #  name: Alarm settings 2 preset
+  #  category: config
+  #  dps:
+  #    - id: 18
+  #      type: base64
+  #      name: option
+  #      optional: true
+  #      mapping:
+  #        - dps_val: "AQAAAAMBAQoEAQDC"    # 01 00 00 00 03 01 01 0A 04 01 00 C2
+  #          value: "Over-current OFF, Over-voltage ON 266V, Under-voltage ON 194V"
+  #        - dps_val: "AQEAKAMBAQoEAQDC"    # 01 01 00 28 03 01 01 0A 04 01 00 C2
+  #          value: "Over-current ON 40 A, Over-voltage ON 266V, Under-voltage ON 194V"
+  #        - dps_val: "AQEAPwMBAQoEAQDC"    # 01 01 00 3F 03 01 01 0A 04 01 00 C2
+  #          value: "Over-current ON 63 A, Over-voltage ON 266V, Under-voltage ON 194V"
+  # ---- DP 22 leakagecurr_test ----
+  - entity: button
+    name: Leakage current self-test
+    category: config
+    hidden: true
+    dps:
+      - id: 22
+        type: boolean
+        name: button
+        optional: true
+  # ---- DP 25 temp_zone_1 ----
+  - entity: sensor
+    name: Temperature
+    class: temperature
+    category: diagnostic
+    dps:
+      - id: 25
+        type: integer
+        name: sensor
+        unit: °C
+        class: measurement
+        optional: true
+  # ---- DP 27 temp_zone_3 ----
+  #- entity: sensor
+  #  name: Time-limited current
+  #  class: current
+  #  category: diagnostic
+  #  dps:
+  #    - id: 27
+  #      type: integer
+  #      name: sensor
+  #      unit: A
+  #      class: measurement
+  #      optional: true
+  # ---- DP 32 supply_frequency ----
+  - entity: sensor
+    name: Grid frequency
+    translation_key: supply_frequency
+    class: frequency
+    category: diagnostic
+    dps:
+      - id: 32
+        type: integer
+        name: sensor
+        unit: Hz
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 10
+  # ---- DP 33 pof_delay ----
+  #   blocks 03 overload, 04 over-voltage, 05 under-voltage, 06 over-current, 09 leakage (0.1 s units),
+  #   0C temperature (s), 0E reclosing attempts (count), 0F restoration delay (s).
+  - entity: number
+    name: Overload protection delay
+    mode: box
+    category: config
+    dps:
+      - id: 33
+        type: base64
+        name: value
+        optional: true
+        mask: "0000FFFF00000000000000000000000000000000000000000000000000000000"
+        unit: s
+        range:
+          min: 1
+          max: 5000
+        mapping:
+          - scale: 10
+  - entity: number
+    name: Over-voltage protection delay
+    mode: box
+    category: config
+    dps:
+      - id: 33
+        type: base64
+        name: value
+        optional: true
+        mask: "000000000000FFFF000000000000000000000000000000000000000000000000"
+        unit: s
+        range:
+          min: 1
+          max: 5000
+        mapping:
+          - scale: 10
+  - entity: number
+    name: Under-voltage protection delay
+    mode: box
+    category: config
+    dps:
+      - id: 33
+        type: base64
+        name: value
+        optional: true
+        mask: "00000000000000000000FFFF0000000000000000000000000000000000000000"
+        unit: s
+        range:
+          min: 1
+          max: 5000
+        mapping:
+          - scale: 10
+  - entity: number
+    name: Over-current protection delay
+    mode: box
+    category: config
+    dps:
+      - id: 33
+        type: base64
+        name: value
+        optional: true
+        mask: "0000000000000000000000000000FFFF00000000000000000000000000000000"
+        unit: s
+        range:
+          min: 1
+          max: 5000
+        mapping:
+          - scale: 10
+  - entity: number
+    name: Leakage protection delay
+    mode: box
+    category: config
+    dps:
+      - id: 33
+        type: base64
+        name: value
+        optional: true
+        mask: "000000000000000000000000000000000000FFFF000000000000000000000000"
+        unit: s
+        range:
+          min: 1
+          max: 5000
+        mapping:
+          - scale: 10
+  - entity: number
+    name: Temperature protection delay
+    mode: box
+    category: config
+    dps:
+      - id: 33
+        type: base64
+        name: value
+        optional: true
+        mask: "00000000000000000000000000000000000000000000FFFF0000000000000000"
+        unit: s
+        range:
+          min: 1
+          max: 500
+  - entity: number
+    name: Reclosing attempts
+    mode: box
+    category: config
+    dps:
+      - id: 33
+        type: base64
+        name: value
+        optional: true
+        mask: "0000000000000000000000000000000000000000000000000000FFFF00000000"
+        range:
+          min: 1
+          max: 30
+  - entity: number
+    name: Recloser restoration delay
+    mode: box
+    category: config
+    dps:
+      - id: 33
+        type: base64
+        name: value
+        optional: true
+        mask: "000000000000000000000000000000000000000000000000000000000000FFFF"
+        unit: s
+        range:
+          min: 1
+          max: 500
+  # ---- DP 34 factory_reset ----
+  #   DANGEROUS: restores factory settings. Hidden by default; comment out if not needed.
+  - entity: button
+    name: Factory reset
+    category: config
+    hidden: true
+    dps:
+      - id: 34
+        type: boolean
+        name: button
+        optional: true
+  # ---- DP 35 online_state ----
+  #- entity: select
+  #  name: Panel online
+  #  category: config
+  #  hidden: true
+  #  dps:
+  #    - id: 35
+  #      type: string
+  #      name: option
+  #      optional: true
+  #      mapping:
+  #        - dps_val: online
+  #          value: Online
+  #        - dps_val: offline
+  #          value: Offline
+  # ---- DP 36 child_lock ----
+  #- entity: switch
+  #  name: Maintenance lockout
+  #  category: config
+  #  dps:
+  #    - id: 36
+  #      type: boolean
+  #      name: switch
+  #      optional: true
+  # ---- DP 37 flow_direction ----
+  - entity: sensor
+    name: Power direction
+    hidden: true
+    category: diagnostic
+    dps:
+      - id: 37
+        type: string
+        name: sensor
+        optional: true
+        mapping:
+          - dps_val: "forward"
+            value: "Forward"
+          - dps_val: "reverse"
+            value: "Reverse"
+  # ---- DP 44 max_residual_phase ----
+  #- entity: sensor
+  #  name: Phase with highest residual current
+  #  category: diagnostic
+  #  dps:
+  #    - id: 44
+  #      type: string
+  #      name: sensor
+  #      optional: true
+  # ---- DP 49 auto_reclosing ----
+  #- entity: switch
+  #  name: Auto reclosing
+  #  category: config
+  #  dps:
+  #    - id: 49
+  #      type: boolean
+  #      name: switch
+  #      optional: true
+  # ---- DP 50 power_factor ----
+  - entity: sensor
+    name: Power factor
+    category: diagnostic
+    dps:
+      - id: 50
+        type: integer
+        name: sensor
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 101 relay_status ----
+  - entity: select
+    name: Power-on state
+    category: config
+    dps:
+      - id: 101
+        type: string
+        name: option
+        optional: true
+        mapping:
+          - dps_val: "off"
+            value: "Off"
+          - dps_val: "on"
+            value: "On"
+          - dps_val: "memory"
+            value: "Restore previous state"
+  # ---- DP 102 countdown ----
+  - entity: number
+    name: Countdown
+    mode: box
+    hidden: true
+    category: config
+    dps:
+      - id: 102
+        type: integer
+        name: value
+        optional: true
+        unit: s
+        range:
+          min: 0
+          max: 86400
+  # ---- DP 104 cycle_time ----
+  #- entity: sensor
+  #  name: Cyclic timing
+  #  category: diagnostic
+  #  dps:
+  #    - id: 104
+  #      type: string
+  #      name: sensor
+  #      optional: true
+  # ---- DP 105 switch_inching ----
+  #   3 bytes [enabled 00/01][delay hi][delay lo], delay 1-3600 s
+  - entity: switch
+    name: Momentary switch
+    hidden: true
+    category: config
+    dps:
+      - id: 105
+        type: base64
+        name: switch
+        optional: true
+        mask: "FF0000"
+  - entity: number
+    name: Momentary switch delay
+    hidden: true
+    mode: box
+    category: config
+    dps:
+      - id: 105
+        type: base64
+        name: value
+        optional: true
+        mask: "00FFFF"
+        unit: s
+        range:
+          min: 1
+          max: 3600
+  # ---- DP 107 current_limit_time_slot ----
+  #   single raw byte (observed 00); meaning unknown.
+  #- entity: sensor
+  #  name: Time-based rate limiting raw
+  #  category: diagnostic
+  #  dps:
+  #    - id: 107
+  #      type: base64
+  #      name: sensor
+  #      optional: true
+  # ---- DP 108 recloser_delay ----
+  #   returned wrong numbers; kept as a read-only sensor for debugging (use DP 33 block 0F instead).
+  #- entity: sensor
+  #  name: Reclosing delay (DP 108)
+  #  category: diagnostic
+  #  dps:
+  #    - id: 108
+  #      type: integer
+  #      name: sensor
+  #      optional: true
+  # ---- DP 109 recloser_number ----
+  #   returned wrong numbers; kept as a read-only sensor for debugging (use DP 33 block 0E instead).
+  #- entity: sensor
+  #  name: Reclosing attempts (DP 109)
+  #  category: diagnostic
+  #  dps:
+  #    - id: 109
+  #      type: integer
+  #      name: sensor
+  #      optional: true
+  # ---- DP 110 recloser_switch ----
+  #- entity: switch
+  #  name: Current-limiting reclosing
+  #  category: config
+  #  dps:
+  #    - id: 110
+  #      type: boolean
+  #      name: switch
+  #      optional: true
+  # ---- DP 111 backlight_switch ----
+  - entity: switch
+    name: Backlight
+    icon: "mdi:lightbulb"
+    category: config
+    dps:
+      - id: 111
+        type: boolean
+        name: switch
+        optional: true

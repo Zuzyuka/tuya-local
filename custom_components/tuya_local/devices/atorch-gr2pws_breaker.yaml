@@ -1,0 +1,639 @@
+name: Smart energy meter (GR2PWS)
+# Built from the Tuya data model (modelId e1kylf6c).
+# All DPs from the model are included; comment out what you do not need.
+products:
+  - id: y1kgvuhjplpctr1o
+    manufacturer: Atorch
+    model: GR2PWS
+entities:
+  # ---- DP 1 switch ----
+  - entity: switch
+    name: Switch
+    dps:
+      - id: 1
+        type: boolean
+        name: switch
+  # ---- DP 9 countdown ----
+  - entity: number
+    name: Countdown
+    mode: box
+    category: config
+    dps:
+      - id: 9
+        type: integer
+        name: value
+        optional: true
+        unit: s
+        range:
+          min: 0
+          max: 360000
+  # ---- DP 17 add_ele ----
+  - entity: sensor
+    name: Add energy
+    translation_key: add_ele
+    hidden: true
+    class: energy
+    dps:
+      - id: 17
+        type: integer
+        name: sensor
+        unit: kWh
+        class: total_increasing
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 18 cur_current ----
+  - entity: sensor
+    name: Current
+    translation_key: cur_current
+    class: current
+    dps:
+      - id: 18
+        type: integer
+        name: sensor
+        unit: A
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 1000
+  # ---- DP 19 cur_power ----
+  - entity: sensor
+    name: Power
+    translation_key: cur_power
+    class: power
+    dps:
+      - id: 19
+        type: integer
+        name: sensor
+        unit: W
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 20 cur_voltage ----
+  - entity: sensor
+    name: Voltage
+    translation_key: cur_voltage
+    class: voltage
+    dps:
+      - id: 20
+        type: integer
+        name: sensor
+        unit: V
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 101 price ----
+  #   scale 3, no unit in the model (currency per kWh)
+  - entity: number
+    name: Price
+    translation_key: price
+    mode: box
+    hidden: true
+    category: config
+    dps:
+      - id: 101
+        type: integer
+        name: value
+        optional: true
+        range:
+          min: 0
+          max: 99999
+        mapping:
+          - scale: 1000
+  # ---- DP 102 cost ----
+  - entity: sensor
+    name: Total cost
+    translation_key: cost
+    hidden: true
+    category: diagnostic
+    dps:
+      - id: 102
+        type: integer
+        name: sensor
+        class: total_increasing
+        optional: true
+        mapping:
+          - scale: 1000
+  # ---- DP 103 add_cost ----
+  - entity: sensor
+    name: Accumulated cost
+    translation_key: add_cost
+    hidden: true
+    category: diagnostic
+    dps:
+      - id: 103
+        type: integer
+        name: sensor
+        class: total_increasing
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 104 ovp ----
+  #   over-voltage protection
+  - entity: number
+    name: Over-voltage protection limit
+    translation_key: ovp
+    mode: box
+    class: voltage
+    category: config
+    dps:
+      - id: 104
+        type: integer
+        name: value
+        optional: true
+        unit: V
+        range:
+          min: 1
+          max: 3200
+        mapping:
+          - scale: 10
+  # ---- DP 105 ocp ----
+  #   over-current protection
+  - entity: number
+    name: Over-current protection limit
+    translation_key: ocp
+    mode: box
+    class: current
+    category: config
+    dps:
+      - id: 105
+        type: integer
+        name: value
+        optional: true
+        unit: A
+        range:
+          min: 1
+          max: 1000
+        mapping:
+          - scale: 10
+  # ---- DP 106 opp ----
+  #   over-power protection
+  - entity: number
+    name: Over-power protection limit
+    translation_key: opp
+    mode: box
+    class: power
+    category: config
+    dps:
+      - id: 106
+        type: integer
+        name: value
+        optional: true
+        unit: W
+        range:
+          min: 1
+          max: 32000
+  # ---- DP 107 language ----
+  - entity: select
+    name: Language
+    category: config
+    dps:
+      - id: 107
+        type: string
+        name: option
+        optional: true
+        mapping:
+          - dps_val: chinese
+            value: Chinese
+          - dps_val: english
+            value: English
+  # ---- DP 108 work_value ----
+  #   not described in the model (probably working screen brightness)
+  - entity: number
+    name: Display brightness
+    translation_key: work_value
+    category: config
+    dps:
+      - id: 108
+        type: integer
+        name: value
+        optional: true
+        range:
+          min: 1
+          max: 9
+  # ---- DP 109 standby_value ----
+  #   not described in the model (probably standby screen brightness)
+  - entity: number
+    name: Standby brightness
+    translation_key: standby_value
+    category: config
+    dps:
+      - id: 109
+        type: integer
+        name: value
+        optional: true
+        range:
+          min: 0
+          max: 9
+  # ---- DP 110 standby_time ----
+  - entity: number
+    name: Standby delay
+    translation_key: standby_time
+    mode: box
+    category: config
+    dps:
+      - id: 110
+        type: integer
+        name: value
+        optional: true
+        unit: s
+        range:
+          min: 3
+          max: 99
+  # ---- DP 111 beep ----
+  - entity: switch
+    name: System sound
+    translation_key: beep
+    category: config
+    dps:
+      - id: 111
+        type: boolean
+        name: switch
+        optional: true
+  # ---- DP 112 sw_mode ----
+  - entity: select
+    name: Switch mode
+    translation_key: sw_mode
+    hidden: true
+    category: config
+    dps:
+      - id: 112
+        type: string
+        name: option
+        optional: true
+        mapping:
+          - dps_val: controlled
+            value: Controlled
+          - dps_val: normally_open
+            value: Off
+  # ---- DP 113 data_reset ----
+  #   resets stored data; hidden by default
+  - entity: button
+    name: Data reset
+    category: config
+    hidden: true
+    dps:
+      - id: 113
+        type: boolean
+        name: button
+        optional: true
+  # ---- DP 114 wifi_reset ----
+  #   resets Wi-Fi settings; hidden by default
+  - entity: button
+    name: Wi-Fi reset
+    translation_key: wifi_reset
+    category: config
+    hidden: true
+    dps:
+      - id: 114
+        type: boolean
+        name: button
+        optional: true
+  # ---- DP 115 factor_reset ----
+  #   DANGEROUS: restores factory settings; hidden by default
+  - entity: button
+    name: Factory reset
+    translation_key: factor_reset
+    category: config
+    hidden: true
+    dps:
+      - id: 115
+        type: boolean
+        name: button
+        optional: true
+  # ---- DP 116 screen_rotation ----
+  - entity: button
+    name: Screen rotation
+    category: config
+    dps:
+      - id: 116
+        type: boolean
+        name: button
+        optional: true
+  # ---- DP 117 standby_screen ----
+  - entity: select
+    name: Standby screen
+    category: config
+    dps:
+      - id: 117
+        type: string
+        name: option
+        optional: true
+        mapping:
+          - dps_val: original
+            value: Original
+          - dps_val: measurement
+            value: Measurement
+          - dps_val: calendar
+            value: Calendar
+          - dps_val: screen_off
+            value: Screen off
+  # ---- DP 118 menu ----
+  - entity: select
+    name: Display style
+    translation_key: menu
+    category: config
+    dps:
+      - id: 118
+        type: string
+        name: option
+        optional: true
+        mapping:
+          - dps_val: front
+            value: Front
+          - dps_val: back
+            value: Back
+          - dps_val: display_off
+            value: Display off
+  # ---- DP 119 lvp ----
+  #   under-voltage protection
+  - entity: number
+    name: Under-voltage protection limit
+    translation_key: lvp
+    mode: box
+    class: voltage
+    category: config
+    dps:
+      - id: 119
+        type: integer
+        name: value
+        optional: true
+        unit: V
+        range:
+          min: 1
+          max: 3200
+        mapping:
+          - scale: 10
+  # ---- DP 120 control ----
+  #   not described in the model
+  - entity: switch
+    name: Limits control
+    translation_key: control
+    category: config
+    dps:
+      - id: 120
+        type: boolean
+        name: switch
+        optional: true
+  # ---- DP 121 olcp ----
+  #   scale 3, range 0.001-0.2 A (likely leakage-current protection)
+  - entity: number
+    name: Leakage current protection limit
+    translation_key: olcp
+    mode: box
+    class: current
+    category: config
+    dps:
+      - id: 121
+        type: integer
+        name: value
+        optional: true
+        unit: A
+        range:
+          min: 1
+          max: 200
+        mapping:
+          - scale: 1000
+  # ---- DP 122 leakage_ele ----
+  - entity: sensor
+    name: Leakage energy lost
+    translation_key: leakage_ele
+    class: energy
+    hidden: true
+    category: diagnostic
+    dps:
+      - id: 122
+        type: integer
+        name: sensor
+        unit: kWh
+        class: total_increasing
+        optional: true
+        mapping:
+          - scale: 1000
+  # ---- DP 123 ele ----
+  - entity: sensor
+    name: Total energy
+    translation_key: ele
+    class: energy
+    dps:
+      - id: 123
+        type: integer
+        name: sensor
+        unit: kWh
+        class: total_increasing
+        optional: true
+        mapping:
+          - scale: 1000
+  # ---- DP 124 leakage_current ----
+  #   read-write in the model; shown as a sensor
+  - entity: sensor
+    name: Leakage current
+    class: current
+    category: diagnostic
+    dps:
+      - id: 124
+        type: integer
+        name: sensor
+        unit: A
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 1000
+  # ---- DP 125 reporting_interval ----
+  - entity: number
+    name: Data refresh interval
+    translation_key: reporting_interval
+    mode: box
+    hidden: true
+    category: config
+    dps:
+      - id: 125
+        type: integer
+        name: value
+        optional: true
+        unit: s
+        range:
+          min: 1
+          max: 90
+  # ---- DP 126 real_time_switch_5s_60s ----
+  - entity: switch
+    name: Real-time refresh
+    translation_key: real_time_switch_5s_60s
+    category: config
+    dps:
+      - id: 126
+        type: boolean
+        name: switch
+        optional: true
+  # ---- DP 132 warning ----
+  #   current warning code: off, ovp, ocp, opp, lvp, le, olcp
+  - entity: sensor
+    name: Alarm indicator
+    category: diagnostic
+    dps:
+      - id: 132
+        type: string
+        name: sensor
+        optional: true
+  # ---- DP 133 cur_frequency ----
+  - entity: sensor
+    name: Supply frequency
+    translation_key: cur_frequency
+    class: frequency
+    category: diagnostic
+    dps:
+      - id: 133
+        type: integer
+        name: sensor
+        unit: Hz
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 134 power_factor ----
+  - entity: sensor
+    name: Power factor
+    category: diagnostic
+    dps:
+      - id: 134
+        type: integer
+        name: sensor
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 135 cpu_temp ----
+  - entity: sensor
+    name: CPU temperature
+    translation_key: cpu_temp
+    class: temperature
+    category: diagnostic
+    dps:
+      - id: 135
+        type: integer
+        name: sensor
+        unit: °C
+        class: measurement
+        optional: true
+  # ---- DP 136 price_mode ----
+  - entity: select
+    name: Price mode
+    hidden: true
+    category: config
+    dps:
+      - id: 136
+        type: string
+        name: option
+        optional: true
+        mapping:
+          - dps_val: single_rate
+            value: Single rate
+          - dps_val: stair
+            value: Stair
+          - dps_val: peak_valley_stair
+            value: Peak-valley stair
+  # ---- DP 137 over_time ----
+  #   not described in the model
+  - entity: number
+    name: Over limit recovery delay
+    translation_key: over_time
+    mode: box
+    category: config
+    dps:
+      - id: 137
+        type: integer
+        name: value
+        optional: true
+        unit: min
+        range:
+          min: 0
+          max: 99
+  # ---- DP 138 ttl ----
+  #   single option "memory"
+  - entity: select
+    name: Power-on switch status
+    translation_key: ttl
+    hidden: true
+    category: config
+    dps:
+      - id: 138
+        type: string
+        name: option
+        optional: true
+        mapping:
+          - dps_val: memory
+            value: Memory
+  # ---- DP 139 prepayment_switch ----
+  - entity: switch
+    name: Prepayment
+    translation_key: prepayment_switch
+    hidden: true
+    category: config
+    dps:
+      - id: 139
+        type: boolean
+        name: switch
+        optional: true
+  # ---- DP 140 balance_energy ----
+  - entity: sensor
+    name: Balance energy
+    hidden: true
+    class: energy_storage
+    category: diagnostic
+    dps:
+      - id: 140
+        type: integer
+        name: sensor
+        unit: kWh
+        class: measurement
+        optional: true
+        mapping:
+          - scale: 100
+  # ---- DP 141 clear_energy ----
+  - entity: button
+    name: Clear remaining energy
+    translation_key: clear_energy
+    category: config
+    hidden: true
+    dps:
+      - id: 141
+        type: boolean
+        name: button
+        optional: true
+  # ---- DP 142 energy_charge ----
+  - entity: number
+    name: Top Up Energy
+    translation_key: energy_charge
+    mode: box
+    hidden: true
+    class: energy_storage
+    category: config
+    dps:
+      - id: 142
+        type: integer
+        name: value
+        optional: true
+        unit: kWh
+        range:
+          min: 0
+          max: 500000
+        mapping:
+          - scale: 100
+  # ---- DP 143 credit ----
+  - entity: number
+    name: Low energy warning
+    translation_key: credit
+    mode: box
+    hidden: true
+    category: config
+    dps:
+      - id: 143
+        type: integer
+        name: value
+        optional: true
+        unit: kWh
+        range:
+          min: 10
+          max: 500
